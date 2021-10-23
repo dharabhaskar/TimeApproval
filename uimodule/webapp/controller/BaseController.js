@@ -8,7 +8,7 @@ sap.ui.define(
     function (Controller, History, UIComponent, formatter) {
         "use strict";
 
-        return Controller.extend("com.infocus.TimeApproval.controller.BaseController", {
+        return Controller.extend("com.infocus.TimeApprovalV2.controller.BaseController", {
             formatter: formatter,
 
             /**

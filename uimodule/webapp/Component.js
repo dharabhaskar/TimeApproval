@@ -1,9 +1,9 @@
 sap.ui.define(
-    ["sap/ui/core/UIComponent", "sap/ui/Device", "com/infocus/TimeApproval/model/models"],
+    ["sap/ui/core/UIComponent", "sap/ui/Device", "com/infocus/TimeApprovalV2/model/models"],
     function (UIComponent, Device, models) {
         "use strict";
 
-        return UIComponent.extend("com.infocus.TimeApproval.Component", {
+        return UIComponent.extend("com.infocus.TimeApprovalV2.Component", {
             metadata: {
                 manifest: "json"
             },
