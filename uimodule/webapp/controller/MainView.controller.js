@@ -41,6 +41,8 @@ sap.ui.define([
 					});
 					model.setProperty("/empList", allValues);
 
+					//_self.updateRegularizationList(firstItem.EmpCode);
+
 					var entry = {};
 					if (allValues.length > 0) {
 						entry = allValues[0];
@@ -54,6 +56,10 @@ sap.ui.define([
 					}
 					model.setProperty("/entry", entry);
 					_self.updateNotesVisibility(entry);
+					_self.updateRegularizationList(entry.EmpCode)
+
+					var oList = _self.byId('idList');
+					oList.setSelectedItem(entry, true);
 
 					console.log(allValues);
 				},
@@ -75,8 +81,8 @@ sap.ui.define([
 				var filter = new sap.ui.model.Filter("Ename", sap.ui.model.FilterOperator.Contains, sQuery);
 				aFilters.push(filter);
 
-				var filter = new sap.ui.model.Filter("RegDate", sap.ui.model.FilterOperator.Contains, sQuery);
-				aFilters.push(filter);
+				/*var filter = new sap.ui.model.Filter("RegDate", sap.ui.model.FilterOperator.Contains, sQuery);
+				aFilters.push(filter);*/
 
 				//oBinding.filter(aFilters, "Application");
 				oBinding.filter(new sap.ui.model.Filter({
@@ -90,40 +96,47 @@ sap.ui.define([
 		},
 		onSelectionChange: function(oEvent) {
 			var _self = this;
+			var rootModel = _self.getView().getModel();
 			var model = _self.getView().getModel("dataSet");
 			var oList = oEvent.getSource();
-			// //var oLabel = this.byId("idFilterLabel");
-			// //var oInfoToolbar = this.byId("idInfoToolbar");
-
-			// // With the 'getSelectedContexts' function you can access the context paths
-			// // of all list items that have been selected, regardless of any current
-			// // filter on the aggregation binding.
-			// var aContexts = oList.getSelectedContexts(true);
-
-			// // update UI
-			// var bSelected = (aContexts && aContexts.length > 0);
-			// //var sText = (bSelected) ? aContexts.length + " selected" : null;
-			// //oInfoToolbar.setVisible(bSelected);
-			// //oLabel.setText(sText);
-
 			var sText = oList._oSelectedItem.mProperties.title;
 
 			var oSelectedItem = oEvent.getParameter("listItem");
 			var selectedEmpData = oSelectedItem.getBindingContext("dataSet").getObject();
 
-			//console.log("Selected Entry: ");
-			//console.log(selectedEmpData);
 			selectedEmpData.FullDate = _self.parseToDate(selectedEmpData.RegDate);
 			model.setProperty("/entry", selectedEmpData);
 
 			_self.updateNotesVisibility(selectedEmpData);
-
-			//this.publishToDetailView(selectedEmpData);
-
-			/*var eventBus = sap.ui.getCore().getEventBus();
-			eventBus.publish("DetailView", "ShowDetailView", selectedEmpData);*/
-
-			//MessageToast.show(aContexts[0].sPath);
+			var empNo = selectedEmpData.EmpCode;
+			_self.updateRegularizationList(empNo);
+		},
+		updateRegularizationList: function(empNo) {
+			var _self = this;
+			var model = _self.getView().getModel("dataSet");
+			var rootModel = _self.getView().getModel();
+			var empListRequest = "/EmpRegSet";
+			sap.ui.core.BusyIndicator.show();
+			rootModel.read(empListRequest, {
+				urlParameters: {
+					"$filter": "EmpCode eq '" + empNo + "'"
+				},
+				success: function(response) {
+					sap.ui.core.BusyIndicator.hide();
+					var allValues = response.results;
+					allValues.forEach(e => {
+						e.RegDate = _self.parseToDateString(e.RegDate);
+						e.TimeIn = _self.parseToTimeString(e.TimeIn);
+						e.TimeOut = _self.parseToTimeString(e.TimeOut);
+						e.Comments = e.EmpComments;
+					});
+					model.setProperty("/regList", allValues);
+				},
+				error: function(error) {
+					sap.ui.core.BusyIndicator.hide();
+					console.log(error);
+				}
+			});
 		},
 		updateNotesVisibility: function(selectedEmpData) {
 			var notesIconTab = this.byId("notesTab");
@@ -261,6 +274,20 @@ sap.ui.define([
 					sap.m.MessageBox.alert('Save failed.');
 				}
 			});
+		},
+		onSelectAllPress: function(oEvent) {
+			var oList = this.byId('regList');
+			var btn = oEvent.getSource();
+			if (btn.getText() == 'Select All') {
+				btn.setText("Deselect All");
+				btn.setType("Emphasized")
+				oList.selectAll();
+			} else {
+				btn.setText("Select All");
+				btn.setType("Default")
+				oList.removeSelections();
+			}
+			console.log(oList)
 		},
 		parseToTimeString: function(tim) {
 			var hours = tim.substring(0, 2);

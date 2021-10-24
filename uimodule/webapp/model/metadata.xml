@@ -4,7 +4,7 @@
     xmlns:sap="http://www.sap.com/Protocols/SAPData" Version="1.0">
     <edmx:DataServices m:DataServiceVersion="2.0">
         <Schema
-            xmlns="http://schemas.microsoft.com/ado/2008/09/edm" Namespace="ZTIMESHEET_MAN_SRV" xml:lang="en" sap:schema-version="1">
+            xmlns="http://schemas.microsoft.com/ado/2008/09/edm" Namespace="ZTIMESHEET_MANV2_SRV" xml:lang="en" sap:schema-version="1">
             <EntityType Name="cico" sap:content-version="1">
                 <Key>
                     <PropertyRef Name="EmpNo"/>

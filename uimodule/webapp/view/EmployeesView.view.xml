@@ -1,10 +1,10 @@
 <mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"
 	controllerName="com.infocus.TimeApprovalV2.controller.EmployeesView" xmlns:html="http://www.w3.org/1999/xhtml">
-	<App>
-		<pages>
-			<Page title="Title">
-				<content></content>
-			</Page>
-		</pages>
+	<App id="app" height="100%">
+		<Page title="Title">
+			<content>
+				<Button text="Click Me" press="onButtonPressed"/>
+			</content>
+		</Page>
 	</App>
 </mvc:View>

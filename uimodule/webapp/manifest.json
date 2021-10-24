@@ -24,8 +24,8 @@
 			}
 		},
 		"dataSources": {
-			"ZTIMESHEET_MAN_SRV": {
-				"uri": "/sap/opu/odata/sap/ZTIMESHEET_MAN_SRV/",
+			"ZTIMESHEET_MANV2_SRV": {
+				"uri": "/sap/opu/odata/sap/ZTIMESHEET_MANV2_SRV/",
 				"type": "OData",
 				"settings": {
 					"odataVersion": "2.0",
@@ -78,58 +78,63 @@
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
 				"settings": {
-					"bundleName": "com.infocus.TimeApproval.i18n.i18n"
+					"bundleName": "com.infocus.TimeApprovalV2.i18n.i18n"
 				}
 			},
 			"": {
-				"uri": "/sap/opu/odata/sap/ZTIMESHEET_MAN_SRV/",
+				"uri": "/sap/opu/odata/sap/ZTIMESHEET_MANV2_SRV/",
 				"type": "sap.ui.model.odata.v2.ODataModel",
 				"settings": {
 					"defaultOperationMode": "Server",
 					"defaultBuindingMode": "OneWay",
 					"defaultCountMode": "Request"
 				},
-				"dataSource": "ZTIMESHEET_MAN_SRV",
+				"dataSource": "ZTIMESHEET_MANV2_SRV",
 				"preload": true
 			}
 		},
 		"resources": {
-			"css": [
-				{
-					"uri": "css/style.css"
-				}
-			]
+			"css": [{
+				"uri": "css/style.css"
+			}]
 		},
 		"routing": {
 			"config": {
 				"routerClass": "sap.m.routing.Router",
 				"viewType": "XML",
-				"viewPath": "com.infocus.TimeApproval.view",
-				"controlId": "idAppControl",
+				"viewPath": "com.infocus.TimeApprovalV2.view",
+				"controlId": "app",
 				"controlAggregation": "pages",
-				"async": true
+				"async": true,
+				"clearControlAgregation":false
 			},
-			"routes": [
-				{
-					"name": "RouteMainView",
-					"pattern": "RouteMainView",
-					"target": [
-						"TargetMainView"
-					]
-				}
-			],
+			"routes": [{
+				"name": "RouteMainView",
+				"pattern": "home",
+				"target": [
+					"TargetMainView"
+				]
+			}, {
+				"name": "RouteEmpView",
+				"pattern": "EmpView",
+				"target": [
+					"TargetEmpView"
+				]
+			}],
 			"targets": {
 				"TargetMainView": {
 					"viewType": "XML",
-					"viewLevel": 1,
-					"viewId": "idAppControl",
 					"viewName": "MainView"
+				},
+				"TargetEmpView": {
+					"viewType": "XML",
+					"viewName": "EmployeesView"
 				}
 			}
 		}
 	},
 	"sap.cloud": {
-		"service": "TimeApproval.service"
+		"service": "TimeApprovalV2.service"
 	},
 	"sap.platform.abap": {
 		"uri": "/sap/bc/ui5_ui5/sap/ztms_man/uimodule/webapp",

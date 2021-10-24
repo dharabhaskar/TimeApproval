@@ -1,6 +1,6 @@
 <mvc:View controllerName="com.infocus.TimeApprovalV2.controller.MainView" xmlns:l="sap.ui.layout" xmlns:mvc="sap.ui.core.mvc"
 	xmlns:core="sap.ui.core" xmlns="sap.m" height="100%" displayBlock="true">
-	<App id="app" height="100%">
+	<App>
 		<l:Splitter id="_IDGenSplitter1" height="100%">
 			<l:contentAreas>
 				<Panel id="_IDGenPanel1" height="100%" class="sapUiNoContentPadding">
@@ -15,11 +15,7 @@
 							growingThreshold="50" includeItemInSelection="true">
 							<!--<StandardListItem title="{dataSet>Ename}" description="{dataSet>Regdate}"/>-->
 							<ObjectListItem title="{dataSet>Ename}">
-								<firstStatus>
-									<ObjectStatus text="TimeOut: {dataSet>TimeIn}"/>
-								</firstStatus>
-								<ObjectAttribute text=" TimeIn: {dataSet>TimeIn}"/>
-								<ObjectAttribute text="Date: {dataSet>RegDate}"/>
+								<ObjectAttribute text="EmpCode: {dataSet>EmpCode}"/>
 							</ObjectListItem>
 						</List>
 					</content>
