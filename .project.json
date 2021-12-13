@@ -20,7 +20,7 @@
   },
   "deploy": {
     "destination": "BFD",
-    "name": "ZTMS_MAN"
+    "name": "ZTMS_MAN_V2"
   },
   "translation": {
     "translationDomain": "",

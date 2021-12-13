@@ -94,9 +94,11 @@
 			}
 		},
 		"resources": {
-			"css": [{
-				"uri": "css/style.css"
-			}]
+			"css": [
+				{
+					"uri": "css/style.css"
+				}
+			]
 		},
 		"routing": {
 			"config": {
@@ -104,31 +106,27 @@
 				"viewType": "XML",
 				"viewPath": "com.infocus.TimeApprovalV2.view",
 				"controlId": "app",
-				"controlAggregation": "pages",
 				"async": true,
-				"clearControlAgregation":false
+				"controlAggregation": "pages"
 			},
-			"routes": [{
-				"name": "RouteMainView",
-				"pattern": "home",
-				"target": [
-					"TargetMainView"
-				]
-			}, {
-				"name": "RouteEmpView",
-				"pattern": "EmpView",
-				"target": [
-					"TargetEmpView"
-				]
-			}],
-			"targets": {
-				"TargetMainView": {
-					"viewType": "XML",
-					"viewName": "MainView"
+			"routes": [
+				{
+					"pattern": "home",
+					"name": "home",
+					"target": "home"
 				},
-				"TargetEmpView": {
-					"viewType": "XML",
+				{
+					"pattern": "emp",
+					"name": "emp",
+					"target": "emp"
+				}
+			],
+			"targets": {
+				"emp": {
 					"viewName": "EmployeesView"
+				},
+				"home": {
+					"viewName": "MainView"
 				}
 			}
 		}
@@ -137,7 +135,7 @@
 		"service": "TimeApprovalV2.service"
 	},
 	"sap.platform.abap": {
-		"uri": "/sap/bc/ui5_ui5/sap/ztms_man/uimodule/webapp",
+		"uri": "/sap/bc/ui5_ui5/sap/ztms_man_v2/uimodule/webapp",
 		"_version": "1.1.0"
 	}
 }

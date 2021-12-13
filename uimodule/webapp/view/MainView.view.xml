@@ -1,15 +1,17 @@
 <mvc:View controllerName="com.infocus.TimeApprovalV2.controller.MainView" xmlns:l="sap.ui.layout" xmlns:mvc="sap.ui.core.mvc"
 	xmlns:core="sap.ui.core" xmlns="sap.m" height="100%" displayBlock="true">
-	<App>
+	<App id="app">
 		<l:Splitter id="_IDGenSplitter1" height="100%">
 			<l:contentAreas>
 				<Panel id="_IDGenPanel1" height="100%" class="sapUiNoContentPadding">
 					<layoutData>
-						<l:SplitterLayoutData size="20%"/>
+						<l:SplitterLayoutData size="25%"/>
 					</layoutData>
 					<content>
 						<OverflowToolbar>
-							<SearchField liveChange=".onSearch" width="100%"/>
+							<SearchField id="searchfemp" liveChange="onEmpSearch" width="80%"/>
+							<ToolbarSpacer/>
+							<Button icon="sap-icon://refresh" press="onRefreshPress"/>
 						</OverflowToolbar>
 						<List id="idList" items="{dataSet>/empList}" selectionChange=".onSelectionChange" mode="SingleSelectMaster" growing="true"
 							growingThreshold="50" includeItemInSelection="true">

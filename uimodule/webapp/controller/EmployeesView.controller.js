@@ -9,7 +9,8 @@ sap.ui.define([
 
 	return Controller.extend("com.infocus.TimeApprovalV2.controller.AppView", {
 		onInit:function(){
-			console.log('AppView Init called...');
+			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+			oRouter.navTo("home");
 		}
 	});
 });

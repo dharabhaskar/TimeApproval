@@ -4,7 +4,12 @@
 		<ObjectPageLayout id="ObjectPageLayout" isChildPage="true">
 			<headerTitle>
 				<ObjectPageHeader id="headerForTest" headerDesign="Light" objectTitle="{dataSet>/entry/Ename}"
-					objectSubtitle="Employee Code: {dataSet>/entry/EmpCode}" showTitleSelector="false"></ObjectPageHeader>
+					objectSubtitle="Employee Code: {dataSet>/entry/EmpCode}" showTitleSelector="false">
+					<actions>
+						<m:Button enabled="false" id="btnAcceptAll" type="Accept" text="Approve" press="onAcceptPess"/>
+						<m:Button enabled="false" id="btnRejectAll" type="Reject" text="Reject" press="onRejectPress"/>
+					</actions>
+				</ObjectPageHeader>
 			</headerTitle>
 			<headerContent></headerContent>
 			<sections>
@@ -12,26 +17,24 @@
 					<subSections>
 						<ObjectPageSubSection title="Regularization Details" titleUppercase="false">
 							<m:HBox fitContainer="true" alignItems="Stretch">
-								<m:HBox width="400px" class="mt-3">
-									<m:List id="regList" items="{dataSet>/regList}" selectionChange=".onSelectionChange" mode="MultiSelect" includeItemInSelection="true" growing="true"
-										growingThreshold="50" width="100%">
+								<m:HBox width="480px" class="mt-1">
+									<m:List id="regList" items="{dataSet>/regList}" selectionChange=".onDateSelectionChange" mode="MultiSelect" includeItemInSelection="true"
+										growing="true" growingThreshold="50" width="100%">
 										<!--<StandardListItem title="{dataSet>Ename}" description="{dataSet>Regdate}"/>-->
 										<m:headerToolbar>
 											<m:OverflowToolbar>
 												<m:content>
 													<m:Title text="{i18n>dateTime}" level="H2"/>
 													<m:ToolbarSpacer/>
-													<m:Button text="Select All" type="Default" press="onSelectAllPress"/>
+													<m:Button id='btnSelectAll' text="Select All" type="Default" press="onSelectAllPress"/>
 												</m:content>
 											</m:OverflowToolbar>
 										</m:headerToolbar>
 										<m:ObjectListItem title="{dataSet>RegDate}">
-											<!--<m:ObjectAttribute text="EmpCode: {dataSet>EmpCode}"/>-->
 											<m:firstStatus>
 												<m:ObjectStatus text="TimeOut: {dataSet>TimeIn}"/>
 											</m:firstStatus>
-											<m:ObjectAttribute text=" TimeIn: {dataSet>TimeIn}"/>
-											<!--<ObjectAttribute text="Date: {dataSet>RegDate}"/>-->
+											<m:ObjectAttribute text=" TimeIn: {dataSet>TimeOut}"/>
 										</m:ObjectListItem>
 									</m:List>
 								</m:HBox>

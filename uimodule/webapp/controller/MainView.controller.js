@@ -16,8 +16,8 @@ sap.ui.define([
 				pattern: "EEEE, MMMM d, yyyy"
 			});
 			//--------------------------------------
-			var empId = "00002085";
-			var cicoSet = "/cicoSet('" + empId + "')";
+			// var empId = "00002085";
+			// var cicoSet = "/cicoSet('" + empId + "')";
 			//-------------------------------------
 			_self.loadData();
 		},
@@ -48,10 +48,6 @@ sap.ui.define([
 						entry = allValues[0];
 					}
 					if (entry) {
-						//----------Dummy Data-----------
-						//entry.Ename = "Subhash Bose";
-						//entry.Comments = "Test comment.";
-						//--------------------------------
 						entry.FullDate = _self.parseToDate(entry.RegDate);
 					}
 					model.setProperty("/entry", entry);
@@ -59,8 +55,8 @@ sap.ui.define([
 					_self.updateRegularizationList(entry.EmpCode)
 
 					var oList = _self.byId('idList');
-					oList.setSelectedItem(entry, true);
-
+					oList.setSelectedItem(oList.getItems().at(0), true);
+				
 					console.log(allValues);
 				},
 				error: function(error) {
@@ -69,10 +65,19 @@ sap.ui.define([
 				}
 			});
 		},
-		onSearch: function(oEvent) {
+		onRefreshPress: function() {
+			var aFilters = [];
+			var oList = this.byId("idList");
+			var oBinding = oList.getBinding("items");
+			oBinding.filter(aFilters, "Application");
+			this.byId("searchfemp").setValue("");
+		},
+		onEmpSearch: function(oEvent) {
+			var sQuery = oEvent.getSource().getValue();
+
 			// add filter for search
 			var aFilters = [];
-			var sQuery = oEvent.getSource().getValue();
+
 			//Console.log("Query: " + sQuery);
 			var oList = this.byId("idList");
 			var oBinding = oList.getBinding("items");
@@ -84,15 +89,49 @@ sap.ui.define([
 				/*var filter = new sap.ui.model.Filter("RegDate", sap.ui.model.FilterOperator.Contains, sQuery);
 				aFilters.push(filter);*/
 
-				//oBinding.filter(aFilters, "Application");
-				oBinding.filter(new sap.ui.model.Filter({
+				oBinding.filter(aFilters, "Application");
+				/*oBinding.filter(new sap.ui.model.Filter({
 					filters: aFilters,
 					and: false,
 					filterType: "Application"
-				}));
+				}));*/
 			} else {
 				oBinding.filter(aFilters, "Application");
 			}
+		},
+		onDateSelectionChange: function(oEvent) {
+			var _self = this;
+			var oList = _self.byId('regList');
+			var btn = _self.byId('btnSelectAll');
+			var model = _self.getView().getModel("dataSet");
+			var oSelectedItems = oList.getSelectedItems().map(item => item.getBindingContext("dataSet").getObject())
+				//console.log(oSelectedItems);
+			model.setProperty("/selectedRegList", oSelectedItems);
+
+			var regList = _self.getView().getModel("dataSet").getProperty('/regList');
+
+			if (oSelectedItems.length == regList.length) {
+				btn.setText("Deselect All");
+				btn.setType("Emphasized");
+			} else {
+				btn.setText("Select All");
+				btn.setType("Default");
+			}
+
+			var btnAcceptAll = _self.byId('btnAcceptAll');
+			var btnRejectAll = _self.byId('btnRejectAll');
+			if (oSelectedItems.length > 0) {
+				btnAcceptAll.setEnabled(true);
+				btnRejectAll.setEnabled(true);
+			} else {
+				btnAcceptAll.setEnabled(false);
+				btnRejectAll.setEnabled(false);
+			}
+
+			var currentSelection = oEvent.getParameter("listItem").getBindingContext("dataSet").getObject();
+			//console.log(currentSelection);
+			model.setProperty("/entry", currentSelection);
+			_self.updateNotesVisibility(currentSelection);
 		},
 		onSelectionChange: function(oEvent) {
 			var _self = this;
@@ -124,13 +163,25 @@ sap.ui.define([
 				success: function(response) {
 					sap.ui.core.BusyIndicator.hide();
 					var allValues = response.results;
+					var maxDate=new Date();
+					maxDate.setDate(maxDate.getDate()-7);
+					//console.log('Max Date: '+maxDate);
+					
 					allValues.forEach(e => {
 						e.RegDate = _self.parseToDateString(e.RegDate);
 						e.TimeIn = _self.parseToTimeString(e.TimeIn);
 						e.TimeOut = _self.parseToTimeString(e.TimeOut);
 						e.Comments = e.EmpComments;
+						e.CreationDate = _self.parseToDateString(e.CreationDate);
+						e.CreationDate2 = _self.parseToDateObj(e.CreationDate);
+						//console.log(e.CreationDate2);
 					});
-					model.setProperty("/regList", allValues);
+					
+					model.setProperty("/regList", allValues.filter(e=>{
+						//return true;
+						return e.CreationDate2>=maxDate;
+					}));
+					_self.byId("regList").removeSelections();
 				},
 				error: function(error) {
 					sap.ui.core.BusyIndicator.hide();
@@ -242,25 +293,39 @@ sap.ui.define([
 
 			var rootModel = _self.getView().getModel();
 			//--------------------------------------
-			var empId = entry.EmpCode; //"00002085";
-			//var cicoSet = "/cicoSet('" + empId + "')";
-			var cicoSet = "/cicoSet"
-				//-------------------------------------
+			var empId = model.getProperty("/entry").EmpCode; //"00002085";
+			//var cicoSet = "/EmpDummySet(EmpNo='" + empId + "')";
+			//var cicoSet = "/cicoSet"
+			var cicoSet = "/EmpDummySet";
+			//-------------------------------------
 
-			var data = {
-				"EmpNo": entry.EmpCode,
-				"RegDate": _self.backToServerDateFormat(entry.RegDate),
-				"TimeIn": _self.backToServerTimeFormat(entry.TimeIn),
-				"TimeOut": _self.backToServerTimeFormat(entry.TimeOut),
-				"Status": status.charAt(0),
-				"Approver": entry.ApproverCode,
-				"RejReason": rejReason
+			var allData = [];
+			var allSelected = model.getProperty('/selectedRegList');
+			allSelected.forEach(entry => {
+				var data = {
+					"EmpNo": entry.EmpCode,
+					"RegDate": _self.backToServerDateFormat(entry.RegDate),
+					"TimeIn": _self.backToServerTimeFormat(entry.TimeIn),
+					"TimeOut": _self.backToServerTimeFormat(entry.TimeOut),
+					"Status": status.charAt(0),
+					"Approver": entry.ApproverCode,
+					"RejReason": rejReason
+				};
+				allData.push(data);
+			});
+
+			var regData = {
+				EmpNo: entry.EmpCode,
+				ToEmp: {
+					results: allData
+				}
 			};
 
 			console.log("Data to save: ");
-			console.log(data);
+			console.log(regData);
+
 			sap.ui.core.BusyIndicator.show();
-			rootModel.create(cicoSet, data, {
+			rootModel.create(cicoSet, regData, {
 				success: function(response) {
 					sap.ui.core.BusyIndicator.hide();
 					console.log(response);
@@ -278,14 +343,21 @@ sap.ui.define([
 		onSelectAllPress: function(oEvent) {
 			var oList = this.byId('regList');
 			var btn = oEvent.getSource();
+			var btnAcceptAll = this.byId('btnAcceptAll');
+			var btnRejectAll = this.byId('btnRejectAll');
+
 			if (btn.getText() == 'Select All') {
 				btn.setText("Deselect All");
 				btn.setType("Emphasized")
 				oList.selectAll();
+				btnAcceptAll.setEnabled(true);
+				btnRejectAll.setEnabled(true);
 			} else {
 				btn.setText("Select All");
 				btn.setType("Default")
 				oList.removeSelections();
+				btnAcceptAll.setEnabled(false);
+				btnRejectAll.setEnabled(false);
 			}
 			console.log(oList)
 		},
@@ -306,6 +378,11 @@ sap.ui.define([
 			var split = tim.split("/");
 			var str = split[2] + "-" + split[1] + "-" + split[0];
 			return this.dateFormat.format(new Date(Date.parse(str)));
+		},
+		parseToDateObj: function(tim) {
+			var split = tim.split("/");
+			var str = split[2] + "-" + split[1] + "-" + split[0];
+			return new Date(Date.parse(str));
 		},
 		backToServerTimeFormat: function(time) {
 			var split = time.split(":");
