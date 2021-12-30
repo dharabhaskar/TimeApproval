@@ -1,6 +1,6 @@
 <core:FragmentDefinition xmlns:core="sap.ui.core" xmlns="sap.uxap" xmlns:layout="sap.ui.layout" xmlns:m="sap.m" xmlns:f="sap.ui.layout.form"
 	height="100%" xmlns:mvc="sap.ui.core.mvc">
-	<m:Page title="" showHeader="false">
+	<m:Page title="" showHeader="false" width="auto">
 		<ObjectPageLayout id="ObjectPageLayout" isChildPage="true">
 			<headerTitle>
 				<ObjectPageHeader id="headerForTest" headerDesign="Light" objectTitle="{dataSet>/entry/Ename}"
@@ -16,46 +16,71 @@
 				<ObjectPageSection titleUppercase="false">
 					<subSections>
 						<ObjectPageSubSection title="Regularization Details" titleUppercase="false">
-							<m:HBox fitContainer="true" alignItems="Stretch">
-								<m:HBox width="480px" class="mt-1">
-									<m:List id="regList" items="{dataSet>/regList}" selectionChange=".onDateSelectionChange" mode="MultiSelect" includeItemInSelection="true"
-										growing="true" growingThreshold="50" width="100%">
-										<!--<StandardListItem title="{dataSet>Ename}" description="{dataSet>Regdate}"/>-->
-										<m:headerToolbar>
-											<m:OverflowToolbar>
-												<m:content>
-													<m:Title text="{i18n>dateTime}" level="H2"/>
-													<m:ToolbarSpacer/>
-													<m:Button id='btnSelectAll' text="Select All" type="Default" press="onSelectAllPress"/>
-												</m:content>
-											</m:OverflowToolbar>
-										</m:headerToolbar>
-										<m:ObjectListItem title="{dataSet>RegDate}">
-											<m:firstStatus>
-												<m:ObjectStatus text="TimeOut: {dataSet>TimeIn}"/>
-											</m:firstStatus>
-											<m:ObjectAttribute text=" TimeIn: {dataSet>TimeOut}"/>
-										</m:ObjectListItem>
-									</m:List>
-								</m:HBox>
-								<m:VBox fitContainer="false" alignItems="Stretch" class="sapUiSmallMargin" width="100%">
-									<m:IconTabBar width="100%" id="idIconTabBarMulti" expanded="{device>/isNoPhone}" class="sapUiResponsiveContentPadding">
+							<m:FlexBox direction="Row" width="100%">
+								<m:List id="regList" items="{dataSet>/regList}" selectionChange=".onDateSelectionChange"
+								mode="MultiSelect" includeItemInSelection="true" growing="false" growingThreshold="50" width="380px" class="p-1">
+									<!--<StandardListItem title="{dataSet>Ename}" description="{dataSet>Regdate}"/>-->
+									<m:headerToolbar>
+										<m:OverflowToolbar>
+											<m:content>
+												<m:Title text="{i18n>dateTime}" level="H2"/>
+												<m:ToolbarSpacer/>
+												<m:Button id='btnSelectAll' text="Select All" type="Default" press="onSelectAllPress"/>
+											</m:content>
+										</m:OverflowToolbar>
+									</m:headerToolbar>
+									<!--<m:ObjectListItem title="{dataSet>RegDate}">
+										<m:firstStatus>
+											<m:ObjectStatus text="TimeOut: {dataSet>TimeOut}"/>
+										</m:firstStatus>
+										<m:ObjectAttribute text=" TimeIn: {dataSet>TimeIn}"/>
+									</m:ObjectListItem>-->
+									<m:CustomListItem class="p-1">
+										<m:FlexBox direction="Row" justifyContent="SpaceBetween" class="">
+											<m:VBox class="px-2">
+												<m:Label text="{dataSet>RegDate}" class="big"/>
+												<m:Label text="TimeIn: {dataSet>TimeIn}"/>
+												<m:Label text="TimeOut: {dataSet>TimeOut}"/>
+											</m:VBox>
+											<m:Button icon="sap-icon://feeder-arrow" press="onPressMoreInfos"/>
+										</m:FlexBox>
+									</m:CustomListItem>
+								</m:List>
+								<m:VBox width="100%" alignContent="Stretch" id="detailsBox" visible="{device>/detailBoxVisibility}">
+									<m:FlexBox class="grey-back" visible="{device>/backBtnVisibility}">
+										<m:Button icon="sap-icon://nav-back" press="onBackPress"/>
+									</m:FlexBox>
+									<m:IconTabBar width="100%" id="idIconTabBarMulti" expanded="true" class="sapUiResponsiveContentPadding">
 										<m:items>
 											<m:IconTabFilter icon="sap-icon://hint" key="info">
-												<f:SimpleForm id="SimpleFormChange354" editable="true" layout="ResponsiveGridLayout" labelSpanXL="3" labelSpanL="3" labelSpanM="3"
-													labelSpanS="12" adjustLabelSpan="false" emptySpanXL="4" emptySpanL="4" emptySpanM="4" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1"
-													singleContainerFullSize="false">
-													<f:content>
-														<m:Label text="{i18n>date}"/>
-														<m:Text text="{dataSet>/entry/RegDate}"/>
-														<m:Label text="{i18n>checkIn}"/>
-														<m:Text text="{dataSet>/entry/TimeIn}"/>
-														<m:Label text="{i18n>checkOut}"/>
-														<m:Text text="{dataSet>/entry/TimeOut}"/>
-													</f:content>
-												</f:SimpleForm>
+												<m:HBox class="sapUiSmallMargin">
+													<f:SimpleForm id="SimpleFormChange354" editable="true" layout="ResponsiveGridLayout" labelSpanXL="3" labelSpanL="3" labelSpanM="3"
+														labelSpanS="12" adjustLabelSpan="false" emptySpanXL="4" emptySpanL="4" emptySpanM="4" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1"
+														singleContainerFullSize="false">
+														<f:content>
+															<m:Label text="{i18n>date}"/>
+															<m:Text text="{dataSet>/entry/RegDate}"/>
+															<m:Label text="{i18n>checkIn}"/>
+															<m:Text text="{dataSet>/entry/TimeIn}"/>
+															<m:Label text="{i18n>checkOut}"/>
+															<m:Text text="{dataSet>/entry/TimeOut}"/>
+														</f:content>
+													</f:SimpleForm>
+													<f:SimpleForm id="SimpleFormChange355" editable="true" layout="ResponsiveGridLayout" labelSpanXL="3" labelSpanL="3" labelSpanM="3"
+														labelSpanS="12" adjustLabelSpan="false" emptySpanXL="4" emptySpanL="4" emptySpanM="4" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1"
+														singleContainerFullSize="false">
+														<f:content>
+															<m:Label text="{i18n>status}"/>
+															<m:Text text="{dataSet>/entry/Status}"/>
+															<m:Label text="{i18n>actualTimeIn}"/>
+															<m:Text text="{dataSet>/entry/ActualTimeIn}"/>
+															<m:Label text="{i18n>actualTimeOut}"/>
+															<m:Text text="{dataSet>/entry/ActualTimeOut}"/>
+														</f:content>
+													</f:SimpleForm>
+												</m:HBox>
 											</m:IconTabFilter>
-											<m:IconTabFilter id="notesTab" icon="sap-icon://document-text" key="info">
+											<m:IconTabFilter id="notesTab" icon="sap-icon://document-text" key="notes">
 												<f:SimpleForm id="SimpleFormChange364" editable="true" layout="ResponsiveGridLayout" labelSpanXL="3" labelSpanL="3" labelSpanM="3"
 													labelSpanS="12" adjustLabelSpan="false" emptySpanXL="4" emptySpanL="4" emptySpanM="4" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1"
 													singleContainerFullSize="false">
@@ -68,7 +93,7 @@
 										</m:items>
 									</m:IconTabBar>
 								</m:VBox>
-							</m:HBox>
+							</m:FlexBox>
 						</ObjectPageSubSection>
 					</subSections>
 				</ObjectPageSection>

@@ -2,4 +2,21 @@
 .mt-1{
 	padding: 10px 0px;
 }
+.p-1{
+	padding:10px;
+	margin:2px;
+}
+.px-2{
+	padding: 0px 20px;	
+}
+.big{
+	font-size:1.1rem;
+}
 
+.test{
+	background-color:red;
+}
+.grey-back{
+	background-color:#e0e0e0;
+	padding-left:16px;
+}

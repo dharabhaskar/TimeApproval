@@ -5,7 +5,7 @@
 			<l:contentAreas>
 				<Panel id="_IDGenPanel1" height="100%" class="sapUiNoContentPadding">
 					<layoutData>
-						<l:SplitterLayoutData size="25%"/>
+						<l:SplitterLayoutData size="30%"/>
 					</layoutData>
 					<content>
 						<OverflowToolbar>
@@ -24,7 +24,6 @@
 				</Panel>
 				<Panel id="_IDGenPanel2" height="100%" class="sapUiNoContentPadding">
 					<core:Fragment fragmentName="com.infocus.TimeApprovalV2.view.DetailsFragment" type="XML"/>
-					<!--<mvc:XMLView id="DetailView" height="100%" viewName="com.infocus.TimeApproval.view.DetailsView"/>-->
 				</Panel>
 			</l:contentAreas>
 		</l:Splitter>

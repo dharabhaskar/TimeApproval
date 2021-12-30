@@ -37,7 +37,10 @@ sap.ui.define([
 						e.RegDate = _self.parseToDateString(e.RegDate);
 						e.TimeIn = _self.parseToTimeString(e.TimeIn);
 						e.TimeOut = _self.parseToTimeString(e.TimeOut);
+						//e.ActualTimeIn= _self.parseToTimeString(e.ActualTimeIn);
+						//e.ActualTimeOut= _self.parseToTimeString(e.ActualTimeOut);
 						e.Comments = e.EmpComments;
+						//e.Status = e.Status
 					});
 					model.setProperty("/empList", allValues);
 
@@ -46,17 +49,18 @@ sap.ui.define([
 					var entry = {};
 					if (allValues.length > 0) {
 						entry = allValues[0];
+						//console.log(entry);
 					}
-					if (entry) {
+					/*if (entry) {
 						entry.FullDate = _self.parseToDate(entry.RegDate);
-					}
-					model.setProperty("/entry", entry);
-					_self.updateNotesVisibility(entry);
+					}*/
+					//model.setProperty("/entry", entry);
+					//_self.updateNotesVisibility(entry);
 					_self.updateRegularizationList(entry.EmpCode)
 
 					var oList = _self.byId('idList');
 					oList.setSelectedItem(oList.getItems().at(0), true);
-				
+
 					console.log(allValues);
 				},
 				error: function(error) {
@@ -128,10 +132,16 @@ sap.ui.define([
 				btnRejectAll.setEnabled(false);
 			}
 
-			var currentSelection = oEvent.getParameter("listItem").getBindingContext("dataSet").getObject();
-			//console.log(currentSelection);
+			/*var currentSelection = oEvent.getParameter("listItem").getBindingContext("dataSet").getObject();
 			model.setProperty("/entry", currentSelection);
-			_self.updateNotesVisibility(currentSelection);
+			_self.updateNotesVisibility(currentSelection);*/
+			/*var oIconTabBar = this.byId("idIconTabBarMulti");
+			var oEvent = new sap.ui.base.Event("customSelect", oIconTabBar, {
+				"key": "info",
+				"item": oIconTabBar.getItems()[0]
+			});
+			this.handleSelect(oEvent);*/
+			
 		},
 		onSelectionChange: function(oEvent) {
 			var _self = this;
@@ -150,6 +160,28 @@ sap.ui.define([
 			var empNo = selectedEmpData.EmpCode;
 			_self.updateRegularizationList(empNo);
 		},
+		onPressMoreInfos: function(oEvent) {
+			var _self = this;
+			var model = _self.getView().getModel("dataSet");
+			var deviceModel = _self.getView().getModel("device");
+			var device = deviceModel.getProperty("/deviceType");
+
+			var oButton = oEvent.getSource();
+			var oContext = oButton.getBindingContext("dataSet");
+			var currentSelection = model.getProperty(oContext.sPath);
+			model.setProperty("/entry", currentSelection);
+			_self.updateNotesVisibility(currentSelection);
+
+			if (device != "Desktop") {
+				this.byId("regList").setVisible(false);
+				deviceModel.setProperty("/detailBoxVisibility", true);
+			}
+		},
+		onBackPress: function() {
+			this.byId("regList").setVisible(true);
+			var deviceModel = this.getView().getModel("device");
+			deviceModel.setProperty("/detailBoxVisibility", false);
+		},
 		updateRegularizationList: function(empNo) {
 			var _self = this;
 			var model = _self.getView().getModel("dataSet");
@@ -163,10 +195,10 @@ sap.ui.define([
 				success: function(response) {
 					sap.ui.core.BusyIndicator.hide();
 					var allValues = response.results;
-					var maxDate=new Date();
-					maxDate.setDate(maxDate.getDate()-7);
+					var maxDate = new Date();
+					maxDate.setDate(maxDate.getDate() - 7);
 					//console.log('Max Date: '+maxDate);
-					
+
 					allValues.forEach(e => {
 						e.RegDate = _self.parseToDateString(e.RegDate);
 						e.TimeIn = _self.parseToTimeString(e.TimeIn);
@@ -175,13 +207,34 @@ sap.ui.define([
 						e.CreationDate = _self.parseToDateString(e.CreationDate);
 						e.CreationDate2 = _self.parseToDateObj(e.CreationDate);
 						//console.log(e.CreationDate2);
+						e.ActualTimeIn = _self.parseToTimeString(e.ActualTimeIn);
+						e.ActualTimeOut = _self.parseToTimeString(e.ActualTimeOut);
+						//e.Comments = e.EmpComments;
+						e.Status = e.Status
+
+						/*if(e.Status=='Absent'){
+							if (e.ActualTimeIn == '00:00:00' && e.ActualTimeOut == '00:00:00') {
+								e.Status="LateIn/LateOut"
+							}
+						}*/
 					});
-					
-					model.setProperty("/regList", allValues.filter(e=>{
+
+					model.setProperty("/regList", allValues.filter(e => {
 						//return true;
-						return e.CreationDate2>=maxDate;
+						return e.CreationDate2 >= maxDate;
 					}));
 					_self.byId("regList").removeSelections();
+
+					var entry = {};
+					if (allValues.length > 0) {
+						entry = allValues[0];
+						//console.log(entry);
+					}
+					if (entry) {
+						entry.FullDate = _self.parseToDate(entry.RegDate);
+					}
+					//model.setProperty("/entry", entry);
+					//_self.updateNotesVisibility(entry);
 				},
 				error: function(error) {
 					sap.ui.core.BusyIndicator.hide();
@@ -191,7 +244,7 @@ sap.ui.define([
 		},
 		updateNotesVisibility: function(selectedEmpData) {
 			var notesIconTab = this.byId("notesTab");
-			console.log(selectedEmpData);
+			//console.log(selectedEmpData);
 			if (selectedEmpData.Comments) {
 				if (selectedEmpData.Comments.length > 0) {
 					notesIconTab.setVisible(true);
@@ -332,6 +385,8 @@ sap.ui.define([
 					_self.loadData();
 					var msg = 'Regularisation request has been ' + (status.charAt(0) == 'R' ? 'rejected.' : 'accepted.')
 					sap.m.MessageBox.success(msg);
+
+					model.setProperty("/entry", {});
 				},
 				error: function(error) {
 					sap.ui.core.BusyIndicator.hide();
@@ -341,6 +396,7 @@ sap.ui.define([
 			});
 		},
 		onSelectAllPress: function(oEvent) {
+			var model = this.getView().getModel("dataSet");
 			var oList = this.byId('regList');
 			var btn = oEvent.getSource();
 			var btnAcceptAll = this.byId('btnAcceptAll');
@@ -352,6 +408,9 @@ sap.ui.define([
 				oList.selectAll();
 				btnAcceptAll.setEnabled(true);
 				btnRejectAll.setEnabled(true);
+				var oSelectedItems = oList.getSelectedItems().map(item => item.getBindingContext("dataSet").getObject())
+					//console.log(oSelectedItems);
+				model.setProperty("/selectedRegList", oSelectedItems);
 			} else {
 				btn.setText("Select All");
 				btn.setType("Default")
